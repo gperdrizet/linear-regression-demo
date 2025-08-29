@@ -151,11 +151,11 @@ def _(mo):
     mo.vstack([
         mo.md(r"""
         ## 3. Single linear regression
-        A linear regression model tries to mimimize the difference between it's predictions and the true labels. It does this by adjusting the `beta` parameters in the following equation:
+        A linear regression model tries to minimize the difference between it's predictions and the true labels. It does this by adjusting the `beta` parameters in the following equation:
         """),
         mo.md(f"""{_tex1}"""),
         mo.md(r"""
-        Seem framiliar? You may have seen it written this way in highschool algebra:
+        Seem familiar? You may have seen it written this way in highschool algebra:
         """),
         mo.md(f"""{_tex2}"""),
         mo.md(r"""
@@ -392,7 +392,7 @@ def _(mo):
     ## 5. Summary
 
     1. **Supervised machine learning** uses labeled data to construct a model that can predict inputs from outputs
-    2. **Linear regression** models data as a linear combination of input features multiplied by coefficents
+    2. **Linear regression** models data as a linear combination of input features multiplied by coefficients
     3. **Single linear regression** uses one input feature, while **multiple linear regression** uses two or more features
     4. **R<sup>2</sup>** is a metric that reports the fraction of variation in the label that is described by the model, higher is better
     5. **RMSE** (root mean squared error) is a metric that reports, on average, how much the model is off by in its predictions
@@ -421,7 +421,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## 7. Minproject assignment
+    ## 7. Miniproject assignment
 
     See the notebook `post_impressions_assignment.ipynb` in the notebooks folder of this repository. The full solution is in the `post_impressions_full_solution.ipynb` notebook - feel free to take a look if you get stuck. But, there are some more advanced techniques we have not covered yet used
     """
