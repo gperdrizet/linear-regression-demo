@@ -1,7 +1,5 @@
 # Linear Regression Demo: LinkedIn Post Impressions
 
-[![Codespaces Prebuilds](https://github.com/gperdrizet/linear-regression-demo/actions/workflows/codespaces/create_codespaces_prebuilds/badge.svg)](https://github.com/gperdrizet/linear-regression-demo/actions/workflows/codespaces/create_codespaces_prebuilds)
-
 A hands-on data science lesson teaching linear regression concepts through real-world LinkedIn post impression data. This repository contains interactive demonstrations and assignments designed for introductory data science bootcamp students.
 
 ## Lesson Overview
