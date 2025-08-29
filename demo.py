@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.15.1"
+__generated_with = "0.15.2"
 app = marimo.App(width="medium")
 
 
@@ -13,7 +13,19 @@ def _():
 
     from sklearn.linear_model import LinearRegression
     from sklearn.metrics import r2_score, root_mean_squared_error
-    return LinearRegression, mo, pd, plt, r2_score, root_mean_squared_error
+
+    cleaned_data_df = pd.read_csv('public/data/02-cleaned_posts.csv')
+    processed_data_df = pd.read_csv('public/data/03-processed_posts.csv')
+    return (
+        LinearRegression,
+        cleaned_data_df,
+        mo,
+        pd,
+        plt,
+        processed_data_df,
+        r2_score,
+        root_mean_squared_error,
+    )
 
 
 @app.cell(hide_code=True)
@@ -79,9 +91,7 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(mo, pd):
-    cleaned_data_df = pd.read_csv('public/data/02-cleaned_posts.csv')
-
+def _(cleaned_data_df, mo):
     mo.vstack([
         mo.md(
         r"""
@@ -102,7 +112,7 @@ def _(mo, pd):
                 2. `word_count`: words in the post body
                 3. `n_tags`: number of tags in the post (ex: #machinelearning)
                 4. `external_link`: does the post contain a link an external site or resource
-                5. `media`: was media (image, documet, etc) uploaded with the post
+                5. `media`: was media (image, document, etc) uploaded with the post
                 6. `post_day`: day of the week the post was shared
                 """
                 ),
@@ -111,11 +121,6 @@ def _(mo, pd):
             justify="start",
         )
     ])
-    return
-
-
-@app.cell
-def _():
     return
 
 
@@ -151,11 +156,11 @@ def _(mo):
     mo.vstack([
         mo.md(r"""
         ## 3. Single linear regression
-        A linear regression model tries to mimimize the difference between it's predictions and the true labels. It does this by adjusting the `beta` parameters in the following equation:
+        A linear regression model tries to minimize the difference between it's predictions and the true labels. It does this by adjusting the `beta` parameters in the following equation:
         """),
         mo.md(f"""{_tex1}"""),
         mo.md(r"""
-        Seem framiliar? You may have seen it written this way in highschool algebra:
+        Seem familiar? You may have seen it written this way in highschool algebra:
         """),
         mo.md(f"""{_tex2}"""),
         mo.md(r"""
@@ -173,12 +178,10 @@ def _(
     mo,
     pd,
     plt,
+    processed_data_df,
     r2_score,
     root_mean_squared_error,
 ):
-    processed_data_df = pd.read_csv('public/data/03-processed_posts.csv')
-    single_linear_model = LinearRegression()
-
     def plot_single_regression(processed_data_df, single_linear_model, feature):
 
         fig, axs = plt.subplots(1, 3, figsize=(12, 3.5))
@@ -248,7 +251,14 @@ def _(
         return fig, coef, intercept
 
 
-    single_regression_plot, coef, intercept = plot_single_regression(processed_data_df, single_linear_model, feature.value)
+    single_linear_model = LinearRegression()
+
+    single_regression_plot, coef, intercept = plot_single_regression(
+        processed_data_df,
+        single_linear_model,
+        feature.value
+    )
+
     feature_name = feature.value
 
     if feature_name is not None:
@@ -257,7 +267,6 @@ def _(
     _tex = (
         f"$$y = \\beta_1 x + \\beta_0$$" if coef is None else f"$$y = {coef[0]:.1f} ({feature_name}) + {int(intercept)}$$"
     )
-
 
     mo.vstack([
         mo.as_html(single_regression_plot),
@@ -269,7 +278,7 @@ def _(
         - **RMSE**: This metric tells you on average, how many impressions the model is off by, smaller is better.
         """),
     ])
-    return processed_data_df, single_linear_model
+    return (single_linear_model,)
 
 
 @app.cell(hide_code=True)
@@ -320,8 +329,6 @@ def _(
     root_mean_squared_error,
     single_linear_model,
 ):
-    multiple_linear_model = LinearRegression()
-
     def plot_multiple_regression(processed_data_df, multiple_linear_model, feature_a, feature_b):
 
         fig, axs = plt.subplots(1, 2, figsize=(12, 4.5))
@@ -371,7 +378,14 @@ def _(
 
         return fig
 
-    multiple_regression_plot = plot_multiple_regression(processed_data_df, multiple_linear_model, feature_a.value, feature_b.value)
+    multiple_linear_model = LinearRegression()
+
+    multiple_regression_plot = plot_multiple_regression(
+        processed_data_df,
+        multiple_linear_model,
+        feature_a.value,
+        feature_b.value
+    )
 
     mo.vstack([
         mo.as_html(multiple_regression_plot),
@@ -391,8 +405,8 @@ def _(mo):
         r"""
     ## 5. Summary
 
-    1. **Supervised machine learning** uses labled data to construct a model that can predict inputs from outputs
-    2. **Linear regression** models data as a linear combination of input features multiplied by coefficents
+    1. **Supervised machine learning** uses labeled data to construct a model that can predict inputs from outputs
+    2. **Linear regression** models data as a linear combination of input features multiplied by coefficients
     3. **Single linear regression** uses one input feature, while **multiple linear regression** uses two or more features
     4. **R<sup>2</sup>** is a metric that reports the fraction of variation in the label that is described by the model, higher is better
     5. **RMSE** (root mean squared error) is a metric that reports, on average, how much the model is off by in its predictions
@@ -411,7 +425,7 @@ def _(mo):
 
     - Preprocessing and preparing data for modeling
     - More advanced techniques for model evaluation
-    - More powerfull model types
+    - More powerful model types
     """
     )
     return
@@ -421,9 +435,9 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## 7. Minproject assignment
+    ## 7. Miniproject assignment
 
-    See the notebook `post_impressions_assignment.ipynb` in the notebooks folder of this repository. The full solution is in the `post_impressions_full_solution.ipynb` notebook - feel free to take a look if you get stuck. But, there are some more advanced techniqes we have not covered yet used
+    See the notebook `post_impressions_assignment.ipynb` in the notebooks folder of this repository. The full solution is in the `post_impressions_full_solution.ipynb` notebook - feel free to take a look if you get stuck. But, there are some more advanced techniques we have not covered yet used
     """
     )
     return
