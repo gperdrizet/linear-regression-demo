@@ -102,7 +102,7 @@ def _(mo, pd):
                 2. `word_count`: words in the post body
                 3. `n_tags`: number of tags in the post (ex: #machinelearning)
                 4. `external_link`: does the post contain a link an external site or resource
-                5. `media`: was media (image, documet, etc) uploaded with the post
+                5. `media`: was media (image, document, etc) uploaded with the post
                 6. `post_day`: day of the week the post was shared
                 """
                 ),
@@ -391,7 +391,7 @@ def _(mo):
         r"""
     ## 5. Summary
 
-    1. **Supervised machine learning** uses labled data to construct a model that can predict inputs from outputs
+    1. **Supervised machine learning** uses labeled data to construct a model that can predict inputs from outputs
     2. **Linear regression** models data as a linear combination of input features multiplied by coefficents
     3. **Single linear regression** uses one input feature, while **multiple linear regression** uses two or more features
     4. **R<sup>2</sup>** is a metric that reports the fraction of variation in the label that is described by the model, higher is better
@@ -411,7 +411,7 @@ def _(mo):
 
     - Preprocessing and preparing data for modeling
     - More advanced techniques for model evaluation
-    - More powerfull model types
+    - More powerful model types
     """
     )
     return
@@ -423,7 +423,7 @@ def _(mo):
         r"""
     ## 7. Minproject assignment
 
-    See the notebook `post_impressions_assignment.ipynb` in the notebooks folder of this repository. The full solution is in the `post_impressions_full_solution.ipynb` notebook - feel free to take a look if you get stuck. But, there are some more advanced techniqes we have not covered yet used
+    See the notebook `post_impressions_assignment.ipynb` in the notebooks folder of this repository. The full solution is in the `post_impressions_full_solution.ipynb` notebook - feel free to take a look if you get stuck. But, there are some more advanced techniques we have not covered yet used
     """
     )
     return
