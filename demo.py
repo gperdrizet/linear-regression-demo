@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.15.1"
+__generated_with = "0.15.2"
 app = marimo.App(width="medium")
 
 
@@ -13,7 +13,19 @@ def _():
 
     from sklearn.linear_model import LinearRegression
     from sklearn.metrics import r2_score, root_mean_squared_error
-    return LinearRegression, mo, pd, plt, r2_score, root_mean_squared_error
+
+    cleaned_data_df = pd.read_csv('public/data/02-cleaned_posts.csv')
+    processed_data_df = pd.read_csv('public/data/03-processed_posts.csv')
+    return (
+        LinearRegression,
+        cleaned_data_df,
+        mo,
+        pd,
+        plt,
+        processed_data_df,
+        r2_score,
+        root_mean_squared_error,
+    )
 
 
 @app.cell(hide_code=True)
@@ -79,9 +91,7 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(mo, pd):
-    cleaned_data_df = pd.read_csv('public/data/02-cleaned_posts.csv')
-
+def _(cleaned_data_df, mo):
     mo.vstack([
         mo.md(
         r"""
@@ -111,11 +121,6 @@ def _(mo, pd):
             justify="start",
         )
     ])
-    return
-
-
-@app.cell
-def _():
     return
 
 
@@ -173,12 +178,10 @@ def _(
     mo,
     pd,
     plt,
+    processed_data_df,
     r2_score,
     root_mean_squared_error,
 ):
-    processed_data_df = pd.read_csv('public/data/03-processed_posts.csv')
-    single_linear_model = LinearRegression()
-
     def plot_single_regression(processed_data_df, single_linear_model, feature):
 
         fig, axs = plt.subplots(1, 3, figsize=(12, 3.5))
@@ -248,7 +251,14 @@ def _(
         return fig, coef, intercept
 
 
-    single_regression_plot, coef, intercept = plot_single_regression(processed_data_df, single_linear_model, feature.value)
+    single_linear_model = LinearRegression()
+
+    single_regression_plot, coef, intercept = plot_single_regression(
+        processed_data_df,
+        single_linear_model,
+        feature.value
+    )
+
     feature_name = feature.value
 
     if feature_name is not None:
@@ -257,7 +267,6 @@ def _(
     _tex = (
         f"$$y = \\beta_1 x + \\beta_0$$" if coef is None else f"$$y = {coef[0]:.1f} ({feature_name}) + {int(intercept)}$$"
     )
-
 
     mo.vstack([
         mo.as_html(single_regression_plot),
@@ -269,7 +278,7 @@ def _(
         - **RMSE**: This metric tells you on average, how many impressions the model is off by, smaller is better.
         """),
     ])
-    return processed_data_df, single_linear_model
+    return (single_linear_model,)
 
 
 @app.cell(hide_code=True)
@@ -320,8 +329,6 @@ def _(
     root_mean_squared_error,
     single_linear_model,
 ):
-    multiple_linear_model = LinearRegression()
-
     def plot_multiple_regression(processed_data_df, multiple_linear_model, feature_a, feature_b):
 
         fig, axs = plt.subplots(1, 2, figsize=(12, 4.5))
@@ -371,7 +378,14 @@ def _(
 
         return fig
 
-    multiple_regression_plot = plot_multiple_regression(processed_data_df, multiple_linear_model, feature_a.value, feature_b.value)
+    multiple_linear_model = LinearRegression()
+
+    multiple_regression_plot = plot_multiple_regression(
+        processed_data_df,
+        multiple_linear_model,
+        feature_a.value,
+        feature_b.value
+    )
 
     mo.vstack([
         mo.as_html(multiple_regression_plot),
