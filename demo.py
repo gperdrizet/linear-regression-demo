@@ -278,7 +278,7 @@ def _(
         - **RMSE**: This metric tells you on average, how many impressions the model is off by, smaller is better.
         """),
     ])
-    return (single_linear_model,)
+    return
 
 
 @app.cell(hide_code=True)
@@ -327,7 +327,6 @@ def _(
     processed_data_df,
     r2_score,
     root_mean_squared_error,
-    single_linear_model,
 ):
     def plot_multiple_regression(processed_data_df, multiple_linear_model, feature_a, feature_b):
 
@@ -347,17 +346,17 @@ def _(
 
             model_features = [feature_a, feature_b]
 
-            result = single_linear_model.fit(
+            result = multiple_linear_model.fit(
                 processed_data_df[model_features],
                 processed_data_df['impressions']
             )
 
-            coef = single_linear_model.coef_
-            intercept = single_linear_model.intercept_
+            coef = multiple_linear_model.coef_
+            intercept = multiple_linear_model.intercept_
 
             feature_values = processed_data_df[model_features]
             labels = processed_data_df['impressions']
-            predictions = single_linear_model.predict(processed_data_df[model_features])
+            predictions = multiple_linear_model.predict(processed_data_df[model_features])
 
             residuals = labels - predictions
 
@@ -376,11 +375,11 @@ def _(
 
         fig.tight_layout()
 
-        return fig
+        return fig, multiple_linear_model
 
     multiple_linear_model = LinearRegression()
 
-    multiple_regression_plot = plot_multiple_regression(
+    multiple_regression_plot, multiple_linear_model = plot_multiple_regression(
         processed_data_df,
         multiple_linear_model,
         feature_a.value,
@@ -395,6 +394,60 @@ def _(
         - Is the new model better? If so, by how much? Is it a lot better or only a little?
         - What are some weaknesses of the model? How could we make it better?
         """),
+    ])
+    return (multiple_linear_model,)
+
+
+@app.cell(hide_code=True)
+def _(
+    feature_a,
+    feature_b,
+    mo,
+    multiple_linear_model,
+    pd,
+    plt,
+    processed_data_df,
+):
+    def plot_feature_importance(multiple_linear_model, processed_data_df, feature_a, feature_b):
+
+        fig, ax = plt.subplots(1,1, figsize=(9,4))
+
+        fig.suptitle('Feature Importance')
+        ax.set_xlabel('Feature')
+        ax.set_ylabel('Regression coefficient')
+    
+        if feature_a is not None and feature_b is not None:
+            importance = pd.DataFrame({
+                'Feature': [feature_a, feature_b],
+                'Importance': multiple_linear_model.coef_
+            })
+        
+            importance.sort_values(by='Importance', inplace=True)
+        
+            ax.bar(importance['Feature'], importance['Importance'], color='black')
+
+        fig.tight_layout()
+
+        return fig
+
+    importance_plot = plot_feature_importance(
+        multiple_linear_model,
+        processed_data_df,
+        feature_a.value,
+        feature_b.value
+    )
+
+    mo.vstack([
+        mo.md(
+        r"""
+        ## 6. Now what?
+    
+        ### 6.1. Feature importance
+    
+        A fitted linear regression model is **interpretable** i.e., it can tell us something about the relative impact of the features on the label.
+        """
+        ),
+        mo.as_html(importance_plot)
     ])
     return
 
@@ -437,7 +490,7 @@ def _(mo):
         r"""
     ## 7. Miniproject assignment
 
-    See the notebook `post_impressions_assignment.ipynb` in the notebooks folder of this repository. The full solution is in the `post_impressions_full_solution.ipynb` notebook - feel free to take a look if you get stuck. But, there are some more advanced techniques we have not covered yet used
+    See the notebook `post_impressions_assignment.ipynb` in the notebooks folder of this repository. The full solution is in the `post_impressions_full_solution.ipynb` notebook, feel free to take a look if you get stuck. But be aware - there are some advanced techniques used in the solution that may make things seem more complicated, not less.
     """
     )
     return
