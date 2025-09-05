@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.15.2"
-app = marimo.App(width="medium")
+app = marimo.App(width="medium", layout_file="layouts/demo.slides.json")
 
 
 @app.cell
@@ -40,6 +40,8 @@ def _(mo):
         r"""
     ## Lesson overview
 
+    This lession introduces supervised machine learning using linear regression with a real world problem - predicting the number of impressions a LinkedIn post will recive.
+
     1. Context
     2. Problem statement
     3. Single linear regression
@@ -54,39 +56,46 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
+    mo.vstack([
+        mo.md(
         r"""
-    ## 1. Context
+        ## 1. Context
 
-    ### Prerequisites
+        """
+        ),
+        mo.hstack([
+            mo.md(
+                r"""
+                ### Prerequisites
 
-    Going into this lesson, you should have some understanding of:
+                1. Python
+                2. Pandas
+                3. Interpreting plots
+                4. Functions (mathematical sense)
+                """
+            ),
+            mo.md(
+                r"""
+                ### Learning goals
 
-    1. Python
-    2. Pandas
-    3. Interpreting plots
-    4. Functions (mathematical sense)
-    5. LinkedIn/social media
+                1. Describe and explain **supervised machine learning**
+                2. Understand how **linear regression** models data
+                3. **Apply** linear regression to real-world problems
+                4. **Evaluate** linear regression model performance
+                """
+            ),
+            mo.md(
+                r"""
+                ### Tools
 
-    ### Learning goals
-
-    After completing this module you should be able to:
-
-    1. Describe and explain **supervised machine learning**
-    2. Understand how **linear regression** models data
-    3. **Apply** linear regression to real-world problems
-    4. **Evaluate** linear regression model performance
-
-    ### Tools
-
-    The technologies we will use are:
-
-    1. Python: the glue
-    2. Pandas: data manipulation
-    3. Scikit-learn: linear regression
-    4. Matplotlib: data visualization
-    """
-    )
+                1. **Python**: the glue
+                2. **Pandas**: data manipulation
+                3. **Scikit-learn**: linear regression
+                4. **Matplotlib**: data visualization
+                """
+            ),
+        ], gap=3.0)
+    ], gap=2.0)
     return
 
 
@@ -95,11 +104,15 @@ def _(cleaned_data_df, mo):
     mo.vstack([
         mo.md(
         r"""
+
         ## 2. Problem statement
 
-        **Problem**: The social media team's LinkedIn posts are not getting very many impressions
+        **Problem**: The social media team's LinkedIn posts are not getting very many impressions.
 
-        **Solution**: Build a machine learning model which takes information about a post as input and predicts impressions
+        **Solution**: Build a machine learning model which takes information about a post as input and predicts impressions. This will allow us to:
+
+        - Estimate the number of impressions a draft post will get
+        - Understand what post characteristics influence impressions
 
         ### Data
         """
@@ -111,8 +124,8 @@ def _(cleaned_data_df, mo):
                 1. `impressions`: number of people who saw the post in their feed
                 2. `word_count`: words in the post body
                 3. `n_tags`: number of tags in the post (ex: #machinelearning)
-                4. `external_link`: does the post contain a link an external site or resource
-                5. `media`: was media (image, document, etc) uploaded with the post
+                4. `external_link`: does the post contain a link an external site or resource?
+                5. `media`: was media (image, document, etc) uploaded with the post?
                 6. `post_day`: day of the week the post was shared
                 """
                 ),
@@ -126,23 +139,27 @@ def _(cleaned_data_df, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    _y_mx_b_fig = 'https://raw.githubusercontent.com/gperdrizet/linear-regression-demo/refs/heads/main/public/figures/y-mx-b.jpg'
+    _model_fig = 'https://raw.githubusercontent.com/gperdrizet/linear-regression-demo/refs/heads/main/public/figures/wordcount-model-impressions.jpg'
+
     features = ['word_count', 'n_tags', 'external_link', 'media', 'post_day']
-
-    # feature = mo.ui.dropdown(
-    #     features,
-    #     value=None,
-    #     label='Input feature',
-    # )
-
-    # features = ['word_count', 'n_tags', 'external_link', 'media', 'post_day']
-
-    # _tex1 = (
-    #     f"$$y = \\beta_1 x + \\beta_
 
     feature = mo.ui.dropdown(
         features,
         value=None,
         label='Input feature',
+    )
+
+    feature_a = mo.ui.dropdown(
+        features,
+        value=None,
+        label='Input feature 1',
+    )
+
+    feature_b = mo.ui.dropdown(
+        features,
+        value=None,
+        label='Input feature 2',
     )
 
     _tex1 = (
@@ -156,19 +173,26 @@ def _(mo):
     mo.vstack([
         mo.md(r"""
         ## 3. Single linear regression
-        A linear regression model tries to minimize the difference between it's predictions and the true labels. It does this by adjusting the `beta` parameters in the following equation:
+        A **linear regression** model works by minimizing the difference between it's predictions and the true labels. It does this by adjusting the `beta` parameters in the following equation:
         """),
-        mo.md(f"""{_tex1}"""),
+        mo.hstack([
+            mo.vstack([
+                mo.md(f"""{_tex1}"""),
+                mo.md(r"""
+                Seem familiar? You may have seen it written this way in highschool algebra:
+                """),
+                mo.md(f"""{_tex2}"""),
+            ]),
+            mo.image(src=_y_mx_b_fig)
+        ]),
         mo.md(r"""
-        Seem familiar? You may have seen it written this way in highschool algebra:
-        """),
-        mo.md(f"""{_tex2}"""),
+        It's the equation of a line! Here `m` is the slope of the line, and `b` is the intercept - where the line crosses the y-axis. We can use linear regression to predict how many impressions a post will get (y) based on one of our input features (x). """),
+        mo.center(mo.image(src=_model_fig, width='500px')),
         mo.md(r"""
-        Where `m` is the slope of the line, and `b` is the intercept - where the line crosses the y-axis. We can use this to try and predict how many impressions a post will get (y) based on one of our input features (x). Try it now - choose a feature from the dropdown box to see how a linear regression model using it as the only input feature performs.
+        Linear regression is a **supervised machine learning** model. We train it by providing known x and y pairs. The model 'learns' by finding the best slope and intercept. It does this by calculating y for all input x values and then comparing the calculated y to the true y. The best slope and intercept give the smallest difference between true and calculated y values.
         """),
-        feature,
     ])
-    return feature, features
+    return feature, feature_a, feature_b
 
 
 @app.cell
@@ -259,16 +283,20 @@ def _(
         feature.value
     )
 
-    feature_name = feature.value
-
-    if feature_name is not None:
-        feature_name = feature_name.replace('_', '\_')
+    if feature.value is not None:
+        feature_name = feature.value.replace('_', '\_')
 
     _tex = (
         f"$$y = \\beta_1 x + \\beta_0$$" if coef is None else f"$$y = {coef[0]:.1f} ({feature_name}) + {int(intercept)}$$"
     )
 
     mo.vstack([
+        mo.md(r"""
+        ## 3. Single linear regression
+
+         Choose a feature see how a linear regression model using it as the only input performs.
+        """),
+        feature,
         mo.as_html(single_regression_plot),
         mo.md(f"""{_tex}"""),
         mo.md(r"""
@@ -279,42 +307,6 @@ def _(
         """),
     ])
     return
-
-
-@app.cell(hide_code=True)
-def _(features, mo):
-    feature_a = mo.ui.dropdown(
-        features,
-        value=None,
-        label='Input feature 1',
-    )
-
-    feature_b = mo.ui.dropdown(
-        features,
-        value=None,
-        label='Input feature 2',
-    )
-
-    _tex1 = (
-        f"$$y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2$$"
-    )
-
-    _tex2 = (
-        f"$$y = m x + b$$"
-    )
-
-    mo.vstack([
-        mo.md(r"""
-        ## 4. Multiple linear regression
-        We can probably improve our single linear regression model by adding more features. For two input features the equation looks like this:
-        """),
-        mo.md(f"""{_tex1}"""),
-        mo.md(r"""
-        We could keep going and add many features. For now, let's try and pick two that beat the performance of our single linear regression model.
-        """),
-        mo.vstack([feature_a, feature_b])
-    ])
-    return feature_a, feature_b
 
 
 @app.cell
@@ -377,6 +369,10 @@ def _(
 
         return fig, multiple_linear_model
 
+    _tex1 = (
+        f"$$y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2$$"
+    )
+
     multiple_linear_model = LinearRegression()
 
     multiple_regression_plot, multiple_linear_model = plot_multiple_regression(
@@ -387,6 +383,12 @@ def _(
     )
 
     mo.vstack([
+        mo.md(r"""
+        ## 4. Multiple linear regression
+        We can probably improve our single linear regression model by adding more features. For two input features the equation looks like this:
+        """),
+        mo.md(f"""{_tex1}"""),
+        mo.hstack([feature_a, feature_b], justify='start'),
         mo.as_html(multiple_regression_plot),
         mo.md(r"""
         **Questions**:
@@ -415,15 +417,15 @@ def _(
         fig.suptitle('Feature Importance')
         ax.set_xlabel('Feature')
         ax.set_ylabel('Regression coefficient')
-    
+
         if feature_a is not None and feature_b is not None:
             importance = pd.DataFrame({
                 'Feature': [feature_a, feature_b],
                 'Importance': multiple_linear_model.coef_
             })
-        
+
             importance.sort_values(by='Importance', inplace=True)
-        
+
             ax.bar(importance['Feature'], importance['Importance'], color='black')
 
         fig.tight_layout()
@@ -440,10 +442,8 @@ def _(
     mo.vstack([
         mo.md(
         r"""
-        ## 6. Now what?
-    
-        ### 6.1. Feature importance
-    
+        ## 4. Multiple linear regression?
+
         A fitted linear regression model is **interpretable** i.e., it can tell us something about the relative impact of the features on the label.
         """
         ),
@@ -458,7 +458,7 @@ def _(mo):
         r"""
     ## 5. Summary
 
-    1. **Supervised machine learning** uses labeled data to construct a model that can predict inputs from outputs
+    1. **Supervised machine learning** uses labeled data to construct a model that can predict outputs from inputs
     2. **Linear regression** models data as a linear combination of input features multiplied by coefficients
     3. **Single linear regression** uses one input feature, while **multiple linear regression** uses two or more features
     4. **R<sup>2</sup>** is a metric that reports the fraction of variation in the label that is described by the model, higher is better
