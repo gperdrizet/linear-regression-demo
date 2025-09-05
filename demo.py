@@ -139,8 +139,8 @@ def _(cleaned_data_df, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    _y_mx_b_fig = 'https://raw.githubusercontent.com/gperdrizet/linear-regression-demo/refs/heads/main/public/figures/y-mx-b.jpg'
-    _model_fig = 'https://raw.githubusercontent.com/gperdrizet/linear-regression-demo/refs/heads/main/public/figures/wordcount-model-impressions.jpg'
+    _y_mx_b_fig = 'public/figures/y-mx-b.jpg'
+    _model_fig = 'public/figures/wordcount-model-impressions.jpg'
 
     features = ['word_count', 'n_tags', 'external_link', 'media', 'post_day']
 
@@ -183,7 +183,7 @@ def _(mo):
                 """),
                 mo.md(f"""{_tex2}"""),
             ]),
-            mo.image(src=_y_mx_b_fig)
+            mo.center(mo.image(src=_y_mx_b_fig)),
         ]),
         mo.md(r"""
         It's the equation of a line! Here `m` is the slope of the line, and `b` is the intercept - where the line crosses the y-axis. We can use linear regression to predict how many impressions a post will get (y) based on one of our input features (x). """),
@@ -412,7 +412,7 @@ def _(
 ):
     def plot_feature_importance(multiple_linear_model, processed_data_df, feature_a, feature_b):
 
-        fig, ax = plt.subplots(1,1, figsize=(9,4))
+        fig, ax = plt.subplots(1,1, figsize=(6,4))
 
         fig.suptitle('Feature Importance')
         ax.set_xlabel('Feature')
@@ -442,12 +442,16 @@ def _(
     mo.vstack([
         mo.md(
         r"""
-        ## 4. Multiple linear regression?
+        ## 4. Multiple linear regression
 
         A fitted linear regression model is **interpretable** i.e., it can tell us something about the relative impact of the features on the label.
         """
         ),
-        mo.as_html(importance_plot)
+        mo.vstack([mo.as_html(importance_plot)], heights=[0.75], align='center'),
+        mo.md(r"""
+        The regression coefficents (values of `beta`) describe the relative strength and direction of each features relationship with the label. Here, posts with more tags tend to get more impressions. Longer posts also tend to get more impressions, but the effect is not quite as strong.
+        """
+        )
     ])
     return
 
@@ -493,11 +497,6 @@ def _(mo):
     See the notebook `post_impressions_assignment.ipynb` in the notebooks folder of this repository. The full solution is in the `post_impressions_full_solution.ipynb` notebook, feel free to take a look if you get stuck. But be aware - there are some advanced techniques used in the solution that may make things seem more complicated, not less.
     """
     )
-    return
-
-
-@app.cell
-def _():
     return
 
 
