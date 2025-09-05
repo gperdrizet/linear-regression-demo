@@ -68,7 +68,8 @@ linear-regression-demo/
 │   └── post_impressions_full_solution.ipynb # Complete solution
 │
 └── public/
-    └── data/
+    ├── figures/                             # Images for Marimo demo
+    └── data/                                # Post impression data
         ├── 01-raw_posts.csv                 # Original LinkedIn post data
         ├── 02-cleaned_posts.csv             # Cleaned dataset
         └── 03-processed_posts.csv           # Preprocessed features for modeling
