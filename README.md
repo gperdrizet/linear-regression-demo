@@ -4,6 +4,8 @@
 
 A hands-on data science lesson teaching linear regression concepts through real-world LinkedIn post impression data. This repository contains interactive demonstrations and assignments designed for introductory data science bootcamp students.
 
+The demo is live [on Render](https://linear-regression-demo.onrender.com). To play with the code, run/edit the demo for yourself, or complete the assignment, see 'Getting Started with GitHub Codespaces' below.
+
 ## Lesson Overview
 
 This lesson teaches fundamental linear regression concepts using LinkedIn post impression data as a practical, relatable example. Students will learn:
