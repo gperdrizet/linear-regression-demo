@@ -1,18 +1,23 @@
 import marimo
 
 __generated_with = "0.15.2"
-app = marimo.App(width="medium", layout_file="layouts/demo.slides.json")
+app = marimo.App(
+    width="medium",
+    app_title="Linear Regression Demo",
+    layout_file="layouts/demo.slides.json",
+    html_head_file="",
+)
 
 
 @app.cell
 def _():
     import marimo as mo
     import matplotlib.pyplot as plt
-    import numpy as np
     import pandas as pd
 
     from sklearn.linear_model import LinearRegression
     from sklearn.metrics import r2_score, root_mean_squared_error
+    from public.demo_functions import plot_single_regression, plot_multiple_regression, plot_feature_importance
 
     cleaned_data_df = pd.read_csv('public/data/02-cleaned_posts.csv')
     processed_data_df = pd.read_csv('public/data/03-processed_posts.csv')
@@ -22,6 +27,9 @@ def _():
         mo,
         pd,
         plt,
+        plot_feature_importance,
+        plot_multiple_regression,
+        plot_single_regression,
         processed_data_df,
         r2_score,
         root_mean_squared_error,
@@ -40,7 +48,7 @@ def _(mo):
         r"""
     ## Lesson overview
 
-    This lession introduces supervised machine learning using linear regression with a real world problem - predicting the number of impressions a LinkedIn post will recive.
+    This lesson introduces supervised machine learning using linear regression with a real world problem - predicting the number of impressions a LinkedIn post will recive.
 
     1. Context
     2. Problem statement
@@ -200,81 +208,9 @@ def _(
     LinearRegression,
     feature,
     mo,
-    pd,
-    plt,
+    plot_single_regression,
     processed_data_df,
-    r2_score,
-    root_mean_squared_error,
 ):
-    def plot_single_regression(processed_data_df, single_linear_model, feature):
-
-        fig, axs = plt.subplots(1, 3, figsize=(12, 3.5))
-
-        fig.suptitle(f'Single linear regression model performance\nR\u00b2 = 0.000, RMSE = 000')
-
-        axs[0].set_title(f'Training data')
-        axs[0].set_xlabel(f'Feature')
-        axs[0].set_ylabel('Impressions')
-
-        axs[1].set_title('Model predictions')
-        axs[1].set_xlabel('True impressions')
-        axs[1].set_ylabel('Predicted impressions')
-
-        axs[2].set_title('Fit residuals')
-        axs[2].set_xlabel('Predicted impressions')
-        axs[2].set_ylabel('True - predicted impressions')
-
-        coef = None
-        intercept = None
-
-        if feature is not None:
-
-            result = single_linear_model.fit(
-                processed_data_df[feature].to_frame(),
-                processed_data_df['impressions']
-            )
-
-            coef = single_linear_model.coef_
-            intercept = single_linear_model.intercept_
-
-            feature_values = processed_data_df[feature]
-            labels = processed_data_df['impressions']
-            predictions = single_linear_model.predict(processed_data_df[feature].to_frame())
-
-            predictions_df = pd.DataFrame({
-                feature: feature_values,
-                'labels': labels,
-                'predictions': predictions
-            })
-
-            predictions_df.sort_values(by='predictions', inplace=True)
-
-            residuals = labels - predictions
-
-            rsq = r2_score(labels, predictions)
-            rmse = root_mean_squared_error(labels, predictions)
-
-            fig.suptitle(f'Single linear regression model performance\nR\u00b2 = {rsq:.3f}, RMSE = {rmse:.0f}')
-
-            axs[0].scatter(processed_data_df[feature], labels, color='black')
-            axs[0].plot(predictions_df[feature], predictions_df['predictions'], color='red', label='Model')
-            axs[0].set_xlabel(f'{feature}')
-            axs[0].set_ylabel('True impressions')
-            axs[0].legend(loc='best')
-
-            axs[1].scatter(labels, predictions, color='black')
-            axs[1].axline((0, 0), slope=1, color='red', linestyle='--', label='Ideal fit')
-            axs[1].legend(loc='best')
-
-            axs[2].scatter(predictions, residuals, color='black')
-            axs[2].axhline(0, color='red', linestyle='--', label='Ideal fit')
-            axs[2].legend(loc='best')
-
-        fig.tight_layout()
-
-        return fig, coef, intercept
-
-
     single_linear_model = LinearRegression()
 
     single_regression_plot, coef, intercept = plot_single_regression(
@@ -315,60 +251,9 @@ def _(
     feature_a,
     feature_b,
     mo,
-    plt,
+    plot_multiple_regression,
     processed_data_df,
-    r2_score,
-    root_mean_squared_error,
 ):
-    def plot_multiple_regression(processed_data_df, multiple_linear_model, feature_a, feature_b):
-
-        fig, axs = plt.subplots(1, 2, figsize=(12, 4.5))
-
-        fig.suptitle(f'Multiple linear regression model performance\nR\u00b2 = 0.000, RMSE = 000')
-
-        axs[0].set_title('Model predictions')
-        axs[0].set_xlabel('True impressions')
-        axs[0].set_ylabel('Predicted impressions')
-
-        axs[1].set_title('Fit residuals')
-        axs[1].set_xlabel('Predicted impressions')
-        axs[1].set_ylabel('True - predicted impressions')
-
-        if feature_a is not None and feature_b is not None:
-
-            model_features = [feature_a, feature_b]
-
-            result = multiple_linear_model.fit(
-                processed_data_df[model_features],
-                processed_data_df['impressions']
-            )
-
-            coef = multiple_linear_model.coef_
-            intercept = multiple_linear_model.intercept_
-
-            feature_values = processed_data_df[model_features]
-            labels = processed_data_df['impressions']
-            predictions = multiple_linear_model.predict(processed_data_df[model_features])
-
-            residuals = labels - predictions
-
-            rsq = r2_score(labels, predictions)
-            rmse = root_mean_squared_error(labels, predictions)
-
-            fig.suptitle(f'Multiple linear regression model performance\nR\u00b2 = {rsq:.3f}, RMSE = {rmse:.0f}')
-
-            axs[0].scatter(labels, predictions, color='black')
-            axs[0].axline((0, 0), slope=1, color='red', linestyle='--', label='Ideal fit')
-            axs[0].legend(loc='best')
-
-            axs[1].scatter(predictions, residuals, color='black')
-            axs[1].axhline(0, color='red', linestyle='--', label='Ideal fit')
-            axs[1].legend(loc='best')
-
-        fig.tight_layout()
-
-        return fig, multiple_linear_model
-
     _tex1 = (
         f"$$y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2$$"
     )
@@ -401,40 +286,9 @@ def _(
 
 
 @app.cell(hide_code=True)
-def _(
-    feature_a,
-    feature_b,
-    mo,
-    multiple_linear_model,
-    pd,
-    plt,
-    processed_data_df,
-):
-    def plot_feature_importance(multiple_linear_model, processed_data_df, feature_a, feature_b):
-
-        fig, ax = plt.subplots(1,1, figsize=(6,4))
-
-        fig.suptitle('Feature Importance')
-        ax.set_xlabel('Feature')
-        ax.set_ylabel('Regression coefficient')
-
-        if feature_a is not None and feature_b is not None:
-            importance = pd.DataFrame({
-                'Feature': [feature_a, feature_b],
-                'Importance': multiple_linear_model.coef_
-            })
-
-            importance.sort_values(by='Importance', inplace=True)
-
-            ax.bar(importance['Feature'], importance['Importance'], color='black')
-
-        fig.tight_layout()
-
-        return fig
-
+def _(feature_a, feature_b, mo, multiple_linear_model, plot_feature_importance):
     importance_plot = plot_feature_importance(
         multiple_linear_model,
-        processed_data_df,
         feature_a.value,
         feature_b.value
     )
