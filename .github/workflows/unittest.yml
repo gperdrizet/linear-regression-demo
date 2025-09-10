@@ -9,16 +9,16 @@ permissions:
 
 jobs:
   build-test:
-    name: Build and test with Python 3.8
+    name: Build and test with Python 3.11
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.8
+    - name: Set up Python 3.11
       uses: actions/setup-python@v3
       with:
-        python-version: "3.8"
+        python-version: "3.11"
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
