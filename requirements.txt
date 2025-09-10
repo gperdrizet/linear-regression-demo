@@ -1,5 +1,5 @@
 jupyter==1.1.1
-marimo
+marimo==0.15.2
 matplotlib==3.10.3
 numpy==2.3.2
 pandas==2.3.1
