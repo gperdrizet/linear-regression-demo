@@ -1,8 +1,5 @@
 import unittest
-# import sys
-# import os
-# import tempfile
-from unittest.mock import patch#, MagicMock
+from unittest.mock import patch
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -14,6 +11,7 @@ class TestPlottingFunctions(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures before each test method."""
+
         # Create sample data for testing
         np.random.seed(42)
         self.sample_data = pd.DataFrame({
@@ -33,6 +31,7 @@ class TestPlottingFunctions(unittest.TestCase):
     
     def test_plot_single_regression_creates_figure(self):
         """Test that plot_single_regression creates a figure with correct structure."""
+
         # Train a simple model
         feature = 'word_count'
         X = self.sample_data[[feature]]
@@ -51,6 +50,7 @@ class TestPlottingFunctions(unittest.TestCase):
             
             # Check subplot titles
             expected_titles = ['Training data', 'Model predictions', 'Fit residuals']
+            
             for i, expected_title in enumerate(expected_titles):
                 self.assertIn(expected_title.lower(), fig.axes[i].get_title().lower())
                 
@@ -60,6 +60,7 @@ class TestPlottingFunctions(unittest.TestCase):
     
     def test_plot_multiple_regression_creates_figure(self):
         """Test that plot_multiple_regression creates a figure with correct structure."""
+        
         # Train a multiple regression model
         feature_a = 'word_count'
         feature_b = 'character_count'
@@ -80,6 +81,7 @@ class TestPlottingFunctions(unittest.TestCase):
             
             # Check subplot titles
             expected_titles = ['Model predictions', 'Fit residuals']
+            
             for i, expected_title in enumerate(expected_titles):
                 self.assertIn(expected_title.lower(), fig.axes[i].get_title().lower())
                 
@@ -88,6 +90,7 @@ class TestPlottingFunctions(unittest.TestCase):
     
     def test_plot_feature_importance_creates_figure(self):
         """Test that plot_feature_importance creates a figure with correct structure."""
+        
         # Train a multiple regression model
         feature_a = 'word_count'
         feature_b = 'character_count'
@@ -116,6 +119,7 @@ class TestPlottingFunctions(unittest.TestCase):
     
     def test_plot_single_regression_with_valid_data(self):
         """Test plot_single_regression with valid input data."""
+        
         feature = 'word_count'
         X = self.sample_data[[feature]]
         y = self.sample_data['impressions']
@@ -125,13 +129,16 @@ class TestPlottingFunctions(unittest.TestCase):
         try:
             with patch('matplotlib.pyplot.show'):
                 fig, coef, intercept = plot_single_regression(self.sample_data, self.model, feature)
+                
                 # Check that we get a matplotlib figure
                 self.assertIsInstance(fig, plt.Figure)
+        
         except Exception as e:
             self.fail(f"plot_single_regression raised an exception: {e}")
     
     def test_plot_multiple_regression_with_valid_data(self):
         """Test plot_multiple_regression with valid input data."""
+        
         feature_a = 'word_count'
         feature_b = 'character_count'
         features = [feature_a, feature_b]
@@ -143,13 +150,16 @@ class TestPlottingFunctions(unittest.TestCase):
         try:
             with patch('matplotlib.pyplot.show'):
                 fig, fitted_model = plot_multiple_regression(self.sample_data, self.model, feature_a, feature_b)
+                
                 # Check that we get a matplotlib figure
                 self.assertIsInstance(fig, plt.Figure)
+        
         except Exception as e:
             self.fail(f"plot_multiple_regression raised an exception: {e}")
     
     def test_plot_feature_importance_with_valid_data(self):
         """Test plot_feature_importance with valid input data."""
+        
         feature_a = 'word_count'
         feature_b = 'character_count'
         features = [feature_a, feature_b]
@@ -168,6 +178,7 @@ class TestPlottingFunctions(unittest.TestCase):
     
     def test_plot_functions_handle_none_features(self):
         """Test that plotting functions handle None feature values gracefully."""
+        
         # Test multiple regression with None features
         with patch('matplotlib.pyplot.show'):
             try:
