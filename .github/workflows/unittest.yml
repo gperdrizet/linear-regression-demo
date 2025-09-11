@@ -1,3 +1,7 @@
+# This workflow will install Python dependencies and run tests when
+# pull request is created to bring changes into main. Note: with a branch
+# protection rule active, this test must pass for the merge to be possible
+
 name: Unittest
 
 on:
@@ -21,7 +25,7 @@ jobs:
         python-version: "3.11"
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        pip install -r deployment_requirements.txt
     - name: Test with unittest
       run: |
         python -m unittest tests/test_demo.py
